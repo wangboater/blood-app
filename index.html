@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f2f4ef">
+  <title>PulseNote｜血壓管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="PulseNote 首頁">
+        <span class="brand-mark" aria-hidden="true">⌁</span>
+        <span>
+          <strong>PulseNote</strong>
+          <small>血壓管理</small>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切換至深色主題" aria-pressed="false" title="切換至深色主題">
+          <span class="theme-icon theme-icon--sun" aria-hidden="true">☀</span>
+          <span class="theme-icon theme-icon--moon" aria-hidden="true">☾</span>
+        </button>
+        <div class="today-chip" aria-label="目前日期與時間">
+          <span class="today-dot" aria-hidden="true"></span>
+          <span id="live-time">載入時間中</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="entry-panel" aria-labelledby="entry-title">
+        <div class="section-kicker">NEW ENTRY <span></span> 今日紀錄</div>
+        <h1 id="entry-title">留下一次<br><em>清楚的測量。</em></h1>
+        <p class="intro-copy">記下身體今天傳來的訊息，讓每一次測量都成為看見變化的線索。</p>
+
+        <form id="reading-form" novalidate>
+          <div class="form-heading">
+            <h2>測量數值</h2>
+            <span>單位：mmHg / bpm</span>
+          </div>
+
+          <div class="pressure-fields">
+            <label class="field field--primary" for="systolic">
+              <span class="field-label">收縮壓 <small>SYS</small></span>
+              <span class="input-wrap">
+                <input id="systolic" name="systolic" type="number" inputmode="numeric" min="60" max="260" placeholder="120" required>
+                <span class="input-unit">mmHg</span>
+              </span>
+              <span class="field-hint">心臟收縮時的壓力</span>
+            </label>
+
+            <label class="field" for="diastolic">
+              <span class="field-label">舒張壓 <small>DIA</small></span>
+              <span class="input-wrap">
+                <input id="diastolic" name="diastolic" type="number" inputmode="numeric" min="30" max="160" placeholder="80" required>
+                <span class="input-unit">mmHg</span>
+              </span>
+              <span class="field-hint">心臟放鬆時的壓力</span>
+            </label>
+
+            <label class="field" for="pulse">
+              <span class="field-label">脈搏 <small>PULSE</small></span>
+              <span class="input-wrap">
+                <input id="pulse" name="pulse" type="number" inputmode="numeric" min="30" max="220" placeholder="72" required>
+                <span class="input-unit">bpm</span>
+              </span>
+              <span class="field-hint">每分鐘心跳次數</span>
+            </label>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <div class="secondary-fields">
+            <label class="field" for="medication">
+              <span class="field-label">用藥狀態</span>
+              <span class="select-wrap">
+                <select id="medication" name="medication">
+                  <option value="none">無</option>
+                  <option value="taken">已服藥</option>
+                  <option value="missed">未服藥</option>
+                </select>
+              </span>
+            </label>
+
+            <label class="field" for="notes">
+              <span class="field-label">備註 <small>OPTIONAL</small></span>
+              <textarea id="notes" name="notes" rows="3" maxlength="160" placeholder="例如：早餐前測量，昨晚睡眠較少"></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button class="button button--primary" type="submit">
+              <span class="button-symbol" aria-hidden="true">＋</span>
+              儲存紀錄
+            </button>
+            <button class="button button--quiet" id="reset-form" type="reset">清除輸入</button>
+          </div>
+          <p class="form-feedback" id="form-feedback" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="records-panel" aria-labelledby="records-title">
+        <div class="records-heading">
+          <div>
+            <div class="section-kicker">YOUR LOG <span></span> 個人紀錄</div>
+            <h2 id="records-title">最近測量</h2>
+          </div>
+          <button class="clear-button" id="clear-records" type="button">清除全部</button>
+        </div>
+
+        <div class="summary-strip" aria-label="紀錄摘要">
+          <div class="summary-item">
+            <span class="summary-label">平均血壓</span>
+            <strong id="average-pressure">—</strong>
+            <span class="summary-unit">mmHg</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">平均脈搏</span>
+            <strong id="average-pulse">—</strong>
+            <span class="summary-unit">bpm</span>
+          </div>
+          <div class="summary-item summary-item--count">
+            <span class="summary-label">累積紀錄</span>
+            <strong id="record-count">0</strong>
+            <span class="summary-unit">筆</span>
+          </div>
+        </div>
+
+        <div class="records-list" id="records-list" aria-live="polite"></div>
+        <div class="empty-state" id="empty-state">
+          <span class="empty-mark" aria-hidden="true">＋</span>
+          <h3>還沒有測量紀錄</h3>
+          <p>完成左側表單後，紀錄會從這裡開始累積。</p>
+        </div>
+
+        <footer class="privacy-note">
+          <span class="lock-mark" aria-hidden="true">●</span>
+          資料只儲存在這個瀏覽器，不會送出到網路。
+        </footer>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
